@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 import os
 import copy
 import numpy as np
@@ -13,16 +13,16 @@ from torch_geometric.data import Data
 from torch_geometric.nn import SAGEConv
 from torch_geometric.loader import DataLoader
 
-# =========================================================
-# 1) CHEMIN
-# =========================================================
+
+# 1 CHEMIN
+
 base_dir = r"C:\Users\CE PC1\Downloads\Doc de materiaux\output\output_corriges"
 output_dir = os.path.dirname(base_dir)
 output_dir = base_dir
 
-# =========================================================
-# 2) LECTURE / NETTOYAGE
-# =========================================================
+
+# 2 LECTURE / NETTOYAGE
+
 def read_csv_robust(path):
     try:
         df = pd.read_csv(path, sep=None, engine="python")
@@ -87,9 +87,9 @@ def check_required_columns(df, required_cols, file_label):
             f"Colonnes trouvées : {df.columns.tolist()}"
         )
 
-# =========================================================
-# 3) CONSTRUCTION D'UN GRAPHE
-# =========================================================
+
+# 3 CONSTRUCTION D'UN GRAPHE
+
 def build_graph(nodes_path, forces_path):
     nodes = read_csv_robust(nodes_path)
     forces = read_csv_robust(forces_path)
@@ -203,9 +203,9 @@ def build_graph(nodes_path, forces_path):
     data.edge_y = edge_y
     return data
 
-# =========================================================
-# 4) CHARGEMENT DE PLUSIEURS GRAPHES
-# =========================================================
+
+# 4 CHARGEMENT DE PLUSIEURS GRAPHES
+
 def load_graphs(base_dir, start_idx, end_idx):
     graphs = []
     valid_ids = []
@@ -232,9 +232,9 @@ def load_graphs(base_dir, start_idx, end_idx):
 
     return graphs, valid_ids
 
-# =========================================================
-# 5) NORMALISATION
-# =========================================================
+
+# 5 NORMALISATION
+
 def compute_normalization_stats(graphs):
     all_x = torch.cat([g.x for g in graphs], dim=0)
     all_y = torch.cat([g.edge_y for g in graphs], dim=0)
@@ -261,9 +261,9 @@ def apply_normalization(graphs, x_mean, x_std, y_mean, y_std):
 
     return norm_graphs
 
-# =========================================================
-# 6) MODELE
-# =========================================================
+
+# 6 MODELE
+
 class EdgeForceGNN(nn.Module):
     def __init__(self, in_channels, hidden_channels):
         super().__init__()
@@ -293,9 +293,9 @@ class EdgeForceGNN(nn.Module):
         pred = self.edge_mlp(edge_feat)
         return pred
 
-# =========================================================
-# 7) ENTRAINEMENT / VALIDATION
-# =========================================================
+
+# 7 ENTRAINEMENT / VALIDATION
+
 def train_one_epoch(model, loader, optimizer, criterion, device):
     model.train()
     total_loss = 0.0
@@ -340,9 +340,9 @@ def evaluate(model, loader, criterion, device):
 
     return total_loss / total_batches, total_mae / total_batches
 
-# =========================================================
-# 8) TRACE DES CHAINES DE FORCES
-# =========================================================
+
+# 8 TRACE DES CHAINES DE FORCES
+
 def plot_force_chains_comparison(
     raw_graph,
     pred_real,
@@ -476,9 +476,9 @@ def plot_force_chains_comparison(
 
     plt.show()
 
-# =========================================================
-# 9) PROGRAMME PRINCIPAL : TRAIN + VALIDATION
-# =========================================================
+
+# 9 PROGRAMME PRINCIPAL : TRAIN + VALIDATION
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Chargement train
@@ -565,14 +565,14 @@ best_model_path = os.path.join(output_dir, "best_edge_force_gnn.pth")
 torch.save(model.state_dict(), best_model_path)
 print(f"\nModèle sauvegardé : {best_model_path}")
 
-# =========================================================
-# 10) TRACE DES COURBES DE LOSS SUR DEUX FIGURES
-# =========================================================
+
+# 10 TRACE DES COURBES DE LOSS SUR DEUX FIGURES
+
 epochs = range(1, len(train_losses) + 1)
 
-# -------------------------
+
 # Figure 1 : Train Loss
-# -------------------------
+
 plt.figure(figsize=(8, 5))
 plt.plot(epochs, train_losses, linewidth=2)
 plt.xlabel("Epoch")
@@ -587,9 +587,9 @@ plt.show()
 
 print(f"Train loss sauvegardé : {train_loss_path}")
 
-# -------------------------
+
 # Figure 2 : Validation Loss
-# -------------------------
+
 plt.figure(figsize=(8, 5))
 plt.plot(epochs, val_losses, linewidth=2)
 plt.xlabel("Epoch")
@@ -604,9 +604,9 @@ plt.show()
 
 print(f"Validation loss sauvegardé : {val_loss_path}")
 
-# =========================================================
-# 11) TEST VISUEL SUR UN GRAPHE DE VALIDATION
-# =========================================================
+
+# 11 TEST VISUEL SUR UN GRAPHE DE VALIDATION
+
 model.eval()
 
 target_id = 501  # tu peux changer ici
