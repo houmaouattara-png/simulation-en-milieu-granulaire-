@@ -28,7 +28,7 @@ Le modèle permet de prédire les principales structures des chaînes de forces 
 
 ## Auteur
 
-Amadou OUATTARA
+OUATTARA Houmarou
 
 Master Energie
 
